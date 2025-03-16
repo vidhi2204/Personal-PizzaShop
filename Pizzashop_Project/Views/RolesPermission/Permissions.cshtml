@@ -1,0 +1,163 @@
+@model List<DAL.ViewModels.RolesPermissionViewModel>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row ms-1">
+    <div class="permissions-main-div  d-flex justify-content-between mt-2">
+        <!-- user txt -->
+        <div class="permissions-div d-flex col-md-3">
+            <div class="permissions-text fs-2 fw-bold text-primary">Permissions</div>
+        </div>
+
+        <!-- back -->
+        <div class="back-adduser-div d-flex align-items-center justify-content-between mt-2">
+            <div class="back-button">
+                <!-- <i class="fa-solid fa-angle-left left-icon-tag"></i> -->
+                <a asp-action="Roles" asp-controller="RolesPermission" class="btn btn-outline-primary  border-primary p-2  ms-3 border text">
+                    < Back</a>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="table-main-div mt-3  pb-3 ps-3 pe-3 bg-white text-secondary">
+        <div class="role-inuput-div pt-4 ms-2">
+            <div class="form-floating col-md-4 col-11 col-sm-6 ">
+                <input type="text" asp-for="@Model[0].rolename"  class="form-control bg-light" id="floatingInput" placeholder="Role" disabled>
+                <label for="floatingInput" class="fs-6 text-secondary">Role</label>
+            </div>
+        </div>
+        <form asp-action="Permissions" asp-controller="RolesPermission" method="post" class="table-responsive">
+        <table class="table" id="demo">
+            <thead>
+                <tr>
+                    <th scope="col"><i class="fa-regular fa-square-minus checkbox-headimg-tag"></i></th>
+                    <th scope="col">Permissions</th>
+                    <th scope="col">Can View</th>
+                    <th scope="col">Can Edit/Add</th>
+                    <th scope="col">Can Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for(int i=0;i<Model.Count ; i++ ){
+
+                 <tr>
+                    <input type="hidden" asp-for="@Model[i].PermissionmanageId">
+                    <input type="hidden" asp-for="@Model[i].rolename">
+                    <td><input type="checkbox" asp-for="@Model[i].Permissioncheck"></td>
+                    <td><div class="name" >@Model[i].Name</div></td>
+                    <td>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input canView" type="checkbox" role="switch" id="flexSwitchCheckChecked" 
+                            asp-for="@Model[i].Canview">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input canEditAdd" type="checkbox" role="switch" id="flexSwitchCheckChecked"
+                                asp-for="@Model[i].Caneditadd">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-check form-switch ">
+                            <input class="form-check-input canDelete" type="checkbox" role="switch" id="flexSwitchCheckChecked"
+                                asp-for="@Model[i].Candelete">
+                        </div>
+                    </td>
+
+                </tr>
+                }
+
+            </tbody>
+        </table>
+        <div class="buttons-save-cancel d-flex justify-content-end">
+            <div class="save-button">
+                <button type="submit" class="btn btn-primary  border-primary p-1 ps-3 pe-3  ms-3 border text">
+                    Save</button>
+            </div>
+            <div class="cancel-button">
+                <a asp-action="Permissions" asp-controller="RolesPermission" asp-route-name="@Model[0].rolename" class="btn btn-outline-primary  border-primary p-1 ps-3 pe-3  ms-3 border text">
+                    Cancel</a>
+            </div>
+        </div>
+        </form>
+
+        <!-- save cancel button -->
+
+
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            var successMessage = '@TempData["SuccessMessage"]';
+            var errorMessage = '@TempData["ErrorMessage"]';
+            console.log("successMessage", successMessage);
+             toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "timeOut": "2000"
+            };
+            if (successMessage) {
+                toastr.success(successMessage);
+            }
+            if (errorMessage) {
+                toastr.error(errorMessage);
+            }
+        })
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded",(e)=>{
+
+            document.querySelectorAll(".canView").forEach((canView)=>{
+                canView.addEventListener('change',function(){
+                    let row =this.closest('tr');
+                    let canEditAdd = row.querySelector('.canEditAdd');
+                    let canDelete =row.querySelector('.canDelete');
+
+                    if(!this.checked){
+                        canEditAdd.checked = false;
+                        canDelete.checked=false;
+                    }
+                })
+            })
+
+             document.querySelectorAll(".canEditAdd").forEach((canEditAdd)=>{
+                canEditAdd.addEventListener('change',function(){
+                    console.log("canedit")
+                    let row =this.closest('tr');
+                    let canView = row.querySelector('.canView');
+                    let canDelete =row.querySelector('.canDelete');
+
+                    if(this.checked){
+                        canView.checked = true;
+                        console.log("hello")
+                    }
+                    if(!this.checked){
+                        canDelete.checked =false;
+                        console.log("world")
+                    }
+                })
+            })
+            
+             document.querySelectorAll(".canDelete").forEach((canDelete)=>{
+                canDelete.addEventListener('change',function(){
+                    let row =this.closest('tr');
+                    let canView = row.querySelector('.canView');
+                    let canEditAdd =row.querySelector('.canEditAdd');
+
+                    if(this.checked){
+                        canView.checked = true;
+                        canEditAdd.checked=true;
+                    }
+                })
+            })
+
+        })
+    </script>
+}

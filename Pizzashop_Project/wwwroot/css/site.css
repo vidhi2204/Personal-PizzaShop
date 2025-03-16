@@ -1,0 +1,256 @@
+.login_details_main_div{
+  background-color: rgb(173, 217, 223);
+}
+
+.login_details_main_div{
+  background-color: rgb(208, 232, 243);
+}
+.text-primary{
+  color:#0084C3 !important;
+}
+.bg-primary{
+  background-color: #0084C3 !important;
+} 
+
+.btn-primary{
+  background-color: #0084C3 !important;
+  color: #ffffff !important;
+}
+
+.btn-outline-primary{
+  color: #0084C3 !important;
+  background-color: #ffffff !important;
+  border:  1px solid #0084C3 !important;
+}
+
+
+.logo-text{
+  font-weight: 700;
+} 
+.image_main_div img{
+  object-fit: cover;
+}
+
+@media (max-width:767px) {
+  .login_details_main_div {
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-image: linear-gradient(rgba(255, 255, 255, 0.743), rgba(255, 253, 253, 0.911)), url("/images/dominos_background.jpg");
+  }
+}
+
+@media (max-width:768px){
+  .two-cols{
+      flex-direction: column;
+   
+  }
+  .three-cols-div{
+      flex-direction: column;
+   
+  }
+  .four-cols{
+      flex-direction: column;
+
+  }
+}
+
+
+
+form i{
+  margin-left: -35px;
+  /* cursor: pointer; */
+}
+
+/* @media (min-device-width:576px) {
+    .offcanvas-class {
+      display: none !important ;
+    }
+  } */
+
+  @media (min-width:360px) and (max-width:700px){
+    .user-list-main-div{
+      /* width: 40px; */
+      flex-direction: column;
+    }
+    .user-text{
+      /* margin-left: 30px; */
+    }
+  }
+
+  @media (max-width:576px){
+    .profile-details-div{
+      margin-top: 25px;
+    }
+  }
+  
+ 
+  .offcanvas-class {
+    margin-top: 63px;
+  }
+  
+  
+  .sidebar-options-menu {
+    list-style-type: none;
+  }
+
+  a{
+    color:black;
+  }
+  
+  .active-div {
+    /* / margin-top: 10px; / */
+    background-color: #bad3e9;
+    color: black;
+    /* / margin-right: 30px; / */
+  }
+  
+  .opt {
+    color:#3e3e3e;
+  }
+  
+  .dashboard-text {
+    font-weight: 600;
+  }
+  
+  
+  
+  .right-side-main-div {
+    background-color: #dfe9f3;
+  }
+  
+  .text-size-set{
+    font-size: small;
+  }
+
+/* .search-icon-style{
+  margin-left: -35px ;
+} */
+ .user-div, .back-button{
+  position: relative;
+ }
+  .password-div{
+  position: relative;
+
+ }
+ .search-icon-style{
+  position: absolute;
+  margin-left: -23px;
+  margin-top: 7px;
+ }
+
+ .table-main-div{
+  /* overflow: auto; */
+  /* overflow: scroll; */
+ }
+
+ .left-icon-tag{
+  position: absolute;
+  margin-top: 10px;
+  margin-left: 15px;
+ }
+
+
+/* 
+ .form-main-div{
+  margin-left: 100px !important;
+ } */
+
+ .password-icon{
+  position: absolute;
+  top: 15px;
+  right: 20px;
+ }
+
+
+ .password-icon-changepass{
+  position: absolute;
+  top: 5px;
+  right: 15px;
+ }
+
+ .password-icon-login{
+
+  position: absolute;
+  top: 3px;
+  right: 10px;
+  z-index: 1 !important;
+ }
+
+ .inputText-login{
+  z-index: 0 !important;
+ } 
+ .browse-file-div{
+  border-style: dashed;
+  border-width: 2px;
+  border-color: lightgrey;
+ }
+
+ .category-active-div{
+  color: blue !important;
+ }
+
+ .div-for-tab-color{
+  background-color: #dfe9f3 ;
+  height: 10px;
+ }
+
+
+ .left-sidebar-category-main-div{
+  /* height: 350px; */
+  overflow: auto;
+ }
+
+ /* .categories-main-div{
+  height: 350px;
+ } */
+
+ .gradient-color{
+  background: linear-gradient(90deg, #3033e9 0%,#1138b8 25%,#090cb1 50%,  #0c021f 100%);
+ }
+
+ 
+.camera-image{
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
+  top: 12px;
+  left: 75px !important;
+}
+
+.user-profile{
+  height: 90px;
+  width: 90px;
+  border-radius: 50%;
+  top: -40px;
+}
+
+.checkbox-headimg-tag{
+  position: relative;
+  left:35px;
+}
+
+
+
+.categories-div i.iconeditdelete{
+  opacity: 0;
+}
+
+.categories-div:hover i.iconeditdelete{
+  opacity: 1;
+  color: grey;
+}
+
+.modifiers-div-main i.iconeditdelete{
+  opacity: 0;
+}
+
+.modifiers-div-main:hover i.iconeditdelete{
+  opacity: 1;
+  color: grey;
+}
+
+.active-category{
+  color:#1138b8 !important;
+  font-weight: bold;
+}

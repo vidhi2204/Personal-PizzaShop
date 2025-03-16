@@ -1,0 +1,1871 @@
+@model DAL.ViewModels.MenuViewModel;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- add category modal -->
+<div id="exampleModal-addcategory" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="AddCategory" asp-controller="Menu">
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="floatingInput"
+                            asp-for="@Model.category.CategoryName" placeholder="name" required>
+                        <span asp-validation-for="@Model.category.CategoryName" class="text-danger"></span>
+                        <label for="floatingInput">Name</label>
+                    </div>
+                    <div class="form-floating">
+                        <textarea class="form-control" placeholder="Leave a comment here"
+                            asp-for="@Model.category.Description" id="floatingTextarea"></textarea>
+                        <label for="floatingTextarea">Description</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">save</button>
+                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit category modal -->
+<div id="exampleModal-editcategory" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="EditCategory" asp-controller="Menu">
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <input type="hidden" asp-for="@Model.category.CategoryId" id="category-id">
+                        <input type="text" class="form-control" id="category-name"
+                            asp-for="@Model.category.CategoryName" placeholder="name" required>
+                        <span asp-validation-for="@Model.category.CategoryName" class="text-danger"></span>
+
+                        <label for="category-name">Name</label>
+                    </div>
+                    <div class="form-floating">
+                        <textarea class="form-control" placeholder="Leave a comment here"
+                            asp-for="@Model.category.Description" id="category-description"></textarea>
+                        <label for="category-description">Description</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="updatebtn" class="btn btn-primary">save</button>
+                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- delete category -->
+<div id="exampleModal-deleteCategory" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Conformation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body ">
+                <div class="delete-cat-image d-flex flex-column  align-items-center">
+                    <img src="images/toppng.com-warning-icon-2400x2400.png" width="50px" alt="">
+                    <p>Are you sure you want to delete this Category?</p>
+                </div>
+            </div>
+            <form asp-action="DeleteCategory" asp-controller="Menu">
+                <input type="hidden" asp-for="@Model.category.CategoryId" id="category-id-fordelete" name="id">
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary">Yes</button>
+                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">No</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Items modal-->
+<div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add New Menu Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="AddItem" enctype="multipart/form-data">
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row">
+                        <!-- Left Section (Form) -->
+                        <div class="col-lg-7 col-md-12">
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="floatingSelect" asp-for="@Model.additem.CategoryId" >
+                                            @foreach(var cat in Model.categories){
+                                                <option value="@cat.CategoryId">@cat.CategoryName</option>
+                                            }
+                                        </select>
+                                        <label for="floatingSelect">Categories*</label>
+                                        <span class="text-danger" asp-validation-for="@Model.additem.CategoryId"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="floatingInput" asp-for="@Model.additem.ItemName" placeholder="Name*">
+                                        <label for="floatingInput">Name*</label>
+                                        <span class="text-danger" asp-validation-for="@Model.additem.ItemName"></span>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="floatingSelect" asp-for="@Model.additem.ItemTypeId">
+                                            <option value="1" selected>veg</option>
+                                            <option value="2">Non-veg</option>
+                                            <option value="3">Vegan</option>
+                                        </select>
+                                        <label for="floatingSelect">Item Type*</label>
+                                        <span class="text-danger" asp-validation-for="@Model.additem.ItemTypeId"></span>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control" id="floatingInput" placeholder="Rate*" asp-for="@Model.additem.Rate"
+                                           >
+                                        <label for="floatingInput">Rate*</label>
+                                        <span class="text-danger" asp-validation-for="@Model.additem.Rate"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control" id="floatingInput" asp-for="@Model.additem.Quantity"
+                                            placeholder="Quantity*" >
+                                        <label for="floatingInput">Quantity*</label>
+                                        <span class="text-danger" asp-validation-for="@Model.additem.Quantity"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="floatingSelect" asp-for="@Model.additem.Unit">
+                                            <option value="pcs">Pieces</option>
+                                            <option value="cm">cm</option>
+                                        </select>
+                                        <label for="floatingSelect">Unit*</label>
+                                        <span class="text-danger" asp-validation-for="@Model.additem.Unit"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="available" asp-for="@Model.additem.Isavailable">
+                                        <label class="form-check-label" for="available">Available</label>
+                                        
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="defaultTax" asp-for="@Model.additem.Isdefaulttax" >
+                                        <label class="form-check-label" for="defaultTax">Default Tax</label>
+                                        
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="taxPercentage" asp-for="@Model.additem.TaxValue"
+                                            placeholder="Tax-Percentage*">
+                                        <label for="taxPercentage" style="text-wrap: noWrap;">Tax Percentage*</label>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="shortCode" asp-for="@Model.additem.ShortCode"
+                                            placeholder="Short Code*">
+                                        <label for="shortCode">Short Code*</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <textarea class="form-control" placeholder="Description" id="description" asp-for="@Model.additem.Description"
+                                            style="height: 80px"></textarea>
+                                        <label for="description">Description</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col-12">
+                                    <label for="choose-file" class="border border-dashed rounded p-3 text-center w-100">
+                                        <span class="d-flex flex-column justify-content-center align-items-center">
+                                            <i class="fa-solid fa-cloud-arrow-up fs-2"></i>
+                                            <span id="browseFileText">Browse files</span>
+                                        </span>
+                                    </label>
+                                    <input type="file" class="d-none" id="choose-file" asp-for="@Model.additem.ItemFormImage">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Section (Modifiers) -->
+                        <div class="col-lg-5 col-md-12 bg-light p-3 rounded">
+                            <select>
+                                <option value="">select a modifier Group</option>
+                            </select>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Buttons -->
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Edit Items modal-->
+<div class="modal fade" id="EditItemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit Menu Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="EditItem" enctype="multipart/form-data">
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row">
+                        <!-- Left Section (Form) -->
+                        <div class="col-lg-7 col-md-12">
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="floatingSelect" asp-for="@Model.additem.CategoryId" >
+                                            @foreach(var cat in Model.categories){
+                                                <option value="@cat.CategoryId" id="@cat.CategoryId" class="categoryClass">@cat.CategoryName</option>
+                                            }
+                                        </select>
+                                        <label for="floatingSelect">Categories*</label>
+                                        <span class="text-danger" asp-validation-for="@Model.additem.CategoryId"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="hidden" id="itemIdForDeleteItem" asp-for="@Model.additem.ItemId">
+                                        <input type="text" class="form-control" id="itemName" asp-for="@Model.additem.ItemName" placeholder="Name*">
+                                        <label for="itemName">Name*</label>
+                                        <span class="text-danger" asp-validation-for="@Model.additem.ItemName"></span>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="itemType" asp-for="@Model.additem.ItemTypeId">
+                                            <option value="1" id="veg" class="itemtypeclass">veg</option>
+                                            <option value="2" id="nonveg" class="itemtypeclass">Non-veg</option>
+                                            <option value="3" id="vegan" class="itemtypeclass">Vegan</option>
+                                        </select>
+                                        <label for="itemType">Item Type*</label>
+                                        <span class="text-danger" asp-validation-for="@Model.additem.ItemTypeId"></span>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control" id="itemrate" placeholder="Rate*" asp-for="@Model.additem.Rate"
+                                           >
+                                        <label for="itemrate">Rate*</label>
+                                        <span class="text-danger" asp-validation-for="@Model.additem.Rate"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control" id="itemQuantity" asp-for="@Model.additem.Quantity"
+                                            placeholder="Quantity*" >
+                                        <label for="itemQuantity">Quantity*</label>
+                                        <span class="text-danger" asp-validation-for="@Model.additem.Quantity"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="floatingSelect" asp-for="@Model.additem.Unit">
+                                            <option value="pcs" id="pcs" class="itemUnitClass">Pieces</option>
+                                            <option value="cm" id="cm" class="itemUnitClass">centimeter</option>
+                                        </select>
+                                        <label for="floatingSelect">Unit*</label>
+                                        <span class="text-danger" asp-validation-for="@Model.additem.Unit"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="isAvailable1" asp-for="@Model.additem.Isavailable">
+                                        <label class="form-check-label" for="isAvailable1">Available</label>
+                                        
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="isDefaultTax1" asp-for="@Model.additem.Isdefaulttax" >
+                                        <label class="form-check-label" for="isDefaultTax1">Default Tax</label>
+                                        
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="taxPercentage1" asp-for="@Model.additem.TaxValue"
+                                            placeholder="Tax-Percentage*">
+                                        <label for="taxPercentage1" style="text-wrap: noWrap;">Tax Percentage*</label>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="shortCode1" asp-for="@Model.additem.ShortCode"
+                                            placeholder="Short Code*">
+                                        <label for="shortCode1">Short Code*</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <textarea class="form-control" placeholder="Description" id="description1" asp-for="@Model.additem.Description"
+                                            style="height: 80px"></textarea>
+                                        <label for="description1">Description</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col-12">
+                                    <input type="file" class="d-none" id="choose-file-editItem" asp-for="@Model.additem.ItemFormImage">
+                                    <label for="choose-file-editItem" class="border border-dashed rounded p-3 text-center w-100">
+                                        <span class="d-flex flex-column justify-content-center align-items-center">
+                                            <i class="fa-solid fa-cloud-arrow-up fs-2"></i>
+                                            <span id="browseFileText-editItem">Browse files</span>
+                                        </span>
+                                    </label>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Right Section (Modifiers) -->
+                        <div class="col-lg-5 col-md-12 bg-light p-3 rounded">
+                            <select>
+                                <option value="">select a modifier Group</option>
+                            </select>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Buttons -->
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- add Modifier group modal -->
+<div id="exampleModal-addmodifiergroup" data-bs-backdrop="static" data-bs-keyboard="false" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" id="AddModifierGroupModal-mainDiv">
+       <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Modifier Group</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="EmptyFieldsAddModGrp()"></button>
+            </div>
+            <form id="addModifierGroupModalFormId">
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <input type="hidden" asp-for="@Model.addmodgrpVm.tempIds" id="tempIdsHiddenField">
+                        <input type="text" asp-for="@Model.addmodgrpVm.ModifierGrpName" class="form-control"
+                            id="AddModGrpName" placeholder="name" required>
+                        <label for="AddModGrpName">Name</label>
+                    </div>
+                    <div class="form-floating">
+                        <textarea class="form-control"  asp-for="@Model.addmodgrpVm.Desciption"
+                            placeholder="Leave a comment here" id="AddMoGrpDescription"></textarea>
+                        <label for="AddMoGrpDescription">Description</label>
+                    </div>
+                    <div class="addExistModifier-div col-5 mt-2  d-flex justify-content-center text-primary"
+                        id="AddExistingModifierTextdiv" data-bs-toggle="modal"
+                        data-bs-target="#exampleModal-addExistingmodifier" onclick="LoadAllModifiers();">+ Add Existing
+                        Modifiers</div>
+                    <div id="ExistingModifiers" class="col-11 mx-auto ms-4 d-flex row"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" data-bs-dismiss="modal"  >save</button>
+                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal" onclick="EmptyFieldsAddModGrp()">cancel</button>
+                </div>
+            </form>
+</div> 
+    </div>
+</div>
+
+<!-- add existing Modifier while add modifir group modal -->
+<div id="exampleModal-addExistingmodifier" data-bs-backdrop="static" data-bs-keyboard="false" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Existing Modifier</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form  id="AddExistModifierFormID">
+                <div class="modal-body">
+                    <div class="search-button ">
+                        @if (Model.Paginationmodifiers.Items.Count != 0)
+                        {
+                            <input type="hidden" id="modifiergrp-id-items" value="@Model.Paginationmodifiers.Items[0].ModifierGrpId">
+                            <input type="text" id="searchbtn-existingMod" placeholder="Search" class="p-1 border ">
+                            <i class="fa-solid fa-magnifying-glass search-icon-style "></i>
+                        }
+                    </div>
+                    <div class="table-main-div table-responsive mt-3 bg-white mx-auto w-100 ">
+                        <table class="table" id="demo">
+                            <thead>
+                                <tr>
+                                    <th scope="col"><input type="checkbox" id="checkboxForSelectAllModifierExist"
+                                            onclick="SelectAllModifiersExist();" class="me-3">
+                                        Name</th>
+                                    <th scope="col">Unit</th>
+                                    <th scope="col">Rate</th>
+                                    <th scope="col">Quantity</th>
+                                </tr>
+                            </thead>
+                            <tbody id="AllModifiersListBody" style="white-space: nowrap;">
+                                @* @await Html.PartialAsync("_AddExisingModifierPaginationPartial", Model.Paginationmodifiers) *@
+                            </tbody>
+                        </table>
+                        @*  Pagination div *@
+                        <div class="pagination-main-div d-flex justify-content-end gap-2 p-3 pt-0 bg-white ">
+
+                            @if (Model.Paginationmodifiers.Items.Count != 0)
+                            {
+                                <span class="mt-2">Items Per page:</span>
+
+                                <select id="itemsperpage-modExist">
+                                    <option value="5">5</option>
+                                    <option value="10">10</option>
+                                    <option value="15">15</option>
+                                </select>
+
+                                <span class=" mt-2 ms-1" id="pagination-text-modExist"></span>
+                                <a id="left-arrow-modExist" class="btn border border-dark bg-light ms-2">&lt;</a>
+                                <a id="right-arrow-modExist" class="btn border border-dark bg-light ms-2">&gt;</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="DisplayNamesOfExistingMod()" >Add</button>
+                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modifier group modal -->
+<div id="exampleModal-editmodifiergroup" data-bs-backdrop="static" data-bs-keyboard="false" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" id="EditModifierGroupModal-mainDiv">
+       <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Modifier Group</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="EmptyFieldsAddModGrpForEdit()"></button>
+            </div>
+            <form id="EditModifierGroupModalFormId">
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <input type="hidden" asp-for="@Model.addmodgrpVm.tempIds" id="tempIdsHiddenFieldForEdit">
+                        <input type="hidden" asp-for="@Model.addmodgrpVm.ModifierGrpId" id="EditModifierGrpIdForEdit">
+                        <input type="text" asp-for="@Model.addmodgrpVm.ModifierGrpName" class="form-control"
+                            id="EditModGrpNameForEdit" placeholder="name" required>
+                        <label for="EditModGrpNameForEdit">Name</label>
+                    </div>
+                    <div class="form-floating">
+                        <textarea class="form-control"  asp-for="@Model.addmodgrpVm.Desciption"
+                            placeholder="Leave a comment here" id="EditModGrpDescriptionForEdit"></textarea>
+                        <label for="EditModGrpDescriptionForEdit">Description</label>
+                    </div>
+                    <div class="addExistModifier-div col-5 mt-2  d-flex justify-content-center text-primary"
+                        id="AddExistingModifierTextdiv" data-bs-toggle="modal"
+                        data-bs-target="#exampleModal-editExistingmodifier" onclick="LoadAllModifiersForEdit();">+ Add Existing
+                        Modifiers</div>
+                    <div id="ExistingModifiersForEdit" class="col-11 mx-auto ms-4 d-flex row"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" data-bs-dismiss="modal"  >save</button>
+                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal" onclick="EmptyFieldsAddModGrpForEdit()">cancel</button>
+                </div>
+            </form>
+</div> 
+    </div>
+</div>
+
+<!-- add existing Modifier while edit modifir group modal -->
+<div id="exampleModal-editExistingmodifier" data-bs-backdrop="static" data-bs-keyboard="false" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Existing Modifier</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form  id="editExistModifierFormID">
+                <div class="modal-body">
+                    <div class="search-button ">
+                        @if (Model.Paginationmodifiers.Items.Count != 0)
+                        {
+                            <input type="hidden" id="modifiergrp-id-items" value="@Model.Paginationmodifiers.Items[0].ModifierGrpId">
+                            <input type="text" id="searchbtn-existingModForEdit" placeholder="Search" class="p-1 border ">
+                            <i class="fa-solid fa-magnifying-glass search-icon-style "></i>
+                        }
+                    </div>
+                    <div class="table-main-div table-responsive mt-3 bg-white mx-auto w-100 ">
+                        <table class="table" id="demo">
+                            <thead>
+                                <tr>
+                                    <th scope="col"><input type="checkbox" id="checkboxForSelectAllModifierExistForEdit"
+                                            onclick="SelectAllModifiersExistForEdit();" class="me-3">
+                                        Name</th>
+                                    <th scope="col">Unit</th>
+                                    <th scope="col">Rate</th>
+                                    <th scope="col">Quantity</th>
+                                </tr>
+                            </thead>
+                            <tbody id="AllModifiersListBodyEdit" style="white-space: nowrap;">
+                                @* @await Html.PartialAsync("_AddExisingModifierPaginationPartial", Model.Paginationmodifiers) *@
+                            </tbody>
+                        </table>
+                        @*  Pagination div *@
+                        <div class="pagination-main-div d-flex justify-content-end gap-2 p-3 pt-0 bg-white ">
+
+                            @if (Model.Paginationmodifiers.Items.Count != 0)
+                            {
+                                <span class="mt-2">Items Per page:</span>
+
+                                <select id="itemsperpage-modExistForEdit">
+                                    <option value="5">5</option>
+                                    <option value="10">10</option>
+                                    <option value="15">15</option>
+                                </select>
+
+                                <span class=" mt-2 ms-1" id="pagination-text-modExistForEdit"></span>
+                                <a id="left-arrow-modExistForEdit" class="btn border border-dark bg-light ms-2">&lt;</a>
+                                <a id="right-arrow-modExistForEdit" class="btn border border-dark bg-light ms-2">&gt;</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="DisplayNamesOfExistingModForEdit()" >Add</button>
+                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- delete modifierGroup -->
+<div id="exampleModal-deleteModifierGroup" class="modal" tabindex="-1" >
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Conformation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body ">
+                <div class="delete-cat-image d-flex flex-column  align-items-center">
+                    <img src="images/toppng.com-warning-icon-2400x2400.png" width="50px" alt="">
+                    <p>Are you sure you want to delete this Modifier Group?</p>
+                </div>
+            </div>
+            <form id="deleteModifierGroupFormId">
+                <input type="hidden" asp-for="@Model.modifiergroup.ModifierGrpId" id="modGrp-id-fordelete" name="modGrpid">
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary" data-bs-dismiss="modal" >Yes</button>
+                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">No</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- delete item -->
+<div id="exampleModal-deleteItem" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Conformation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body ">
+                <div class="delete-cat-image d-flex flex-column  align-items-center">
+                    <img src="images/toppng.com-warning-icon-2400x2400.png" width="50px" alt="">
+                    <p>Are you sure you want to delete this Item?</p>
+                </div>
+
+            </div>
+            <form asp-action="DeleteItem" asp-controller="Menu">
+            <div class="modal-footer d-flex justify-content-center">
+                <input type="hidden"  id="deleteItemId" name="itemID">
+                <button type="submit" class="btn btn-primary" >Yes</button>
+                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">No</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- delete all item -->
+<div id="exampleModal-deleteAllItem" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Conformation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body ">
+                <div class="delete-cat-image d-flex flex-column  align-items-center">
+                    <img src="images/toppng.com-warning-icon-2400x2400.png" width="50px" alt="">
+                    <p>Are you sure you want to delete All These Items?</p>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary" id="deleteAllItemsModalYesButton" data-bs-dismiss="modal">Yes</button>
+                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">No</button>
+            </div>
+           
+        </div>
+    </div>
+</div>
+
+
+<!-- add new modifier modal -->
+<div id="exampleModal-addmodifier" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg" id="AddModifierModal-mainDiv">
+
+    </div>
+</div>
+
+
+<!-- Update modifier modal -->
+<div id="exampleModal-updatemodifier" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Modifier</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="form-floating col-6">
+                        <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+                            <option selected>Select Modifier (Group)</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                    </div>
+                    <div class="form-floating col-6 mb-2 p-1">
+                        <input type="text" class="form-control" id="floatingInput" placeholder="name" required>
+                        <label for="floatingInput">Name</label>
+                    </div>
+                    <div class="form-floating col-4 p-1">
+                        <input type="text" class="form-control" id="floatingInput" placeholder="0" required>
+                        <label for="floatingInput">Rate</label>
+                    </div>
+                    <div class="form-floating col-4 p-1">
+                        <input type="text" class="form-control" id="floatingInput" placeholder="0" required>
+                        <label for="floatingInput">Quantity</label>
+                    </div>
+                    <div class="form-floating col-4 mb-2">
+                        <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+                            <option selected>Select a unit</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                    </div>
+                    <div class="form-floating col-12 p-1">
+                        <textarea class="form-control" placeholder="Leave a comment here"
+                            id="floatingTextarea"></textarea>
+                        <label for="floatingTextarea">Description</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">save</button>
+                <button type="button" class="btn btn-outline-primary">cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--menu user  -->
+<div class="menu-header-main-div  d-flex justify-content-between mt-2 ">
+    <!-- menu txt -->
+    <div class="menu-div d-flex col-md-6">
+        <div class="menu-text fs-2 fw-bold text-primary">Menu</div>
+    </div>
+</div>
+
+<!-- categories -->
+<div class="container menu-main-div mt-3 ">
+    <div class="inner-div bg-white">
+
+        <!-- tabs -->
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane"
+                    type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">
+                    <div class="item-div d-flex align-items-center justify-content-start ms-3">
+                        <i class="fa-solid fa-list-ul  fs-5"></i>
+                        <p class="  fs-5 ms-2 mt-2 fw-semibold">Items</p>
+                    </div>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane"
+                    type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">
+                    <div class="modifiers-div d-flex fs-5 ms-4 align-items-center ">
+                        <i class="fa-solid fa-table"></i>
+                        <p class="fs-5 ms-2 mt-2 fw-semibold">Modofiers</p>
+                    </div>
+                </button>
+            </li>
+        </ul>
+
+        <!-- tab content -->
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab"
+                tabindex="0">
+                <div class="div-for-tab-color">&nbsp</div>
+                <div class="categories-main-div container-fluid">
+                    <div class="row">
+                        <div
+                            class="left-sidebar-category-main-div bg-light mt-2 pt-0 col-12 col-sm-12 col-md-4 col-lg-3 col-xl-2 d-flex justify-content-md-start justify-content-center ">
+
+                            <div class=" w-100 justify-content-center">
+
+                                <!-- logo -->
+                                <div class="logo-main-div d-flex justify-content-between mb-3">
+
+                                    <div class="logo-text text-primary fs-5 mt-2  ms-1 fw-semibold">
+                                        Category
+                                    </div>
+                                    <div class="logo-image ">
+                                        <i class="fa-regular fa-square-plus fs-4 text-primary mt-3"
+                                            data-bs-toggle="modal" data-bs-target="#exampleModal-addcategory"></i>
+                                    </div>
+                                </div>
+
+                                <!-- Sandwich -->
+                               @{var flag =true;
+
+                                @foreach (var cat in Model.categories)
+                                {
+                                    <div class="categories-div d-flex justify-content-between text-dark col-md-12 col-6  p-1 @(flag?"active-category":"")"  data-id="@cat.CategoryId" >
+                                        
+                                        <div  class="d-flex "  >
+                                                <i class="fa-solid fa-receipt mt-1 "></i>
+                                                <p class="text-size-set mt-0  m-0 ms-3 ">@cat.CategoryName</p>
+   
+                                        </div>
+                                        <div>
+                                            <input type="hidden" value="@cat.Description">
+                                            <i class="fa-solid fa-pen fs-6 iconeditdelete" onclick="GetdetailsForUpdate(this)"
+                                                data-id="@cat.CategoryId" data-bs-toggle="modal"
+                                                data-bs-target="#exampleModal-editcategory"></i>
+                                            <i class="fa-solid fa-trash-can iconeditdelete fs-6  ms-1" data-bs-toggle="modal"
+                                                data-bs-target="#exampleModal-deleteCategory" data-id="@cat.CategoryId"
+                                                onclick="GetIdForDelete(this)"></i>
+                                        </div>
+
+                                    </div>
+                                    flag=false;
+                                }
+                                }
+
+                            </div>
+                        </div>
+
+                        <div
+                            class=" right-side-table-div bg-white mt-2 pt-0 com-sm-12 col-md-8 col-lg-9 col-xl-10 col-12 ">
+                            <div class="item-list-main-div  d-lg-flex justify-content-between mt-2">
+                                <!-- item txt -->
+                                <div class="item-div d-flex col-md-3">
+                                    <div class="item-text fs-3 fw-bold text-primary">Items</div>
+                                </div>
+
+                                <!-- search add itemr -->
+                                <div class="search-item-div d-flex  align-items-center justify-content-between mt-2">
+                                    <div class="search-button ">
+                                         @if(Model.Pagination.Items.Count != 0 ){
+                                        <input type="hidden" id="category-id-items" value="@Model.Pagination.Items[0].CategoryId">
+                                        <input type="text" id="searchbtn" placeholder="Search" class="p-1 border ">
+                                        <i class="fa-solid fa-magnifying-glass search-icon-style "></i>
+                                        }
+                                    </div>
+                                    <div class="discard-button">
+                                        <a href="#" class="btn  p-1 ps-2 pe-2 ms-3 border" data-bs-toggle="modal" data-bs-target="#exampleModal-deleteAllItem" ><i
+                                                class="fa-solid fa-trash-can "></i></a>
+
+                                    </div>
+                                    <div class="additem-button">
+                                        <button class="btn btn-primary text-light p-2 ms-3 border text"
+                                            data-bs-toggle="modal" data-bs-target="#addItemModal">+ Add Item</button>
+                                       
+                                        </div>
+
+                                </div>
+                            </div>
+                            <div class="table-main-div table-responsive mt-3 bg-white mx-auto w-100 ">
+                                @if(Model.Pagination.Items.Count == 0){
+                                    <h3 class="d-flex justify-content-center align-items-center text-danger">No data found</h3>
+                                }
+                                else{
+                                    <table class="table" id="demo1">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col"><input type="checkbox"  id="checkboxForSelectAllItem" onclick="SelectAllItem()" class="me-3">
+                                                Name</th>
+                                            <th scope="col">Item Type</th>
+                                            <th scope="col">Rate</th>
+                                            <th scope="col">Quantity</th>
+                                            <th scope="col">Available</th>
+                                            <th scope="col">Action </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="itemListBody" style="white-space: nowrap; ">
+
+                                        @await Html.PartialAsync("_ItemListPartal", Model.Pagination)
+
+                                    </tbody>
+                                </table>
+                                }
+                                @*  Pagination div *@
+                                <div class="pagination-main-div d-flex justify-content-end gap-2 p-3 pt-0 bg-white ">
+
+                                   @if(Model.Pagination.Items.Count != 0){
+                                     <span class="mt-2">Items Per page:</span>
+
+                                    <select id="itemsperpage">
+                                        <option value="5">5</option>
+                                        <option value="10">10</option>
+                                        <option value="15">15</option>
+                                    </select>
+
+                                    <span class=" mt-2 ms-1" id="pagination-text"></span>
+                                    <a id="left-arrow" class="btn border border-dark bg-light ms-2">&lt;</a>
+                                    <a id="right-arrow" class="btn border border-dark bg-light ms-2">&gt;</a>
+                                   }
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* Modifier *@
+            <div class="tab-pane fade" id="profile-tab-pane" role="tabpane2" aria-labelledby="profile-tab" tabindex="1">
+                <div class="div-for-tab-color">&nbsp</div>
+                <div class="categories-main-div container-fluid">
+                    <div class="row ">
+                        <div
+                            class="left-sidebar-category-main-div bg-light mt-2 pt-0 col-12 col-sm-12 col-md-4 col-lg-3 col-xl-2 d-flex justify-content-md-start justify-content-center ">
+
+                            <div class=" w-100 justify-content-center ">
+                                <!-- logo -->
+                                <div class="logo-main-div d-flex justify-content-between mb-3">
+
+                                    <div class="logo-text text-primary  fs-5 mt-2  ms-1 fw-semibold">
+                                        Modifier Group
+                                    </div>
+                                    <div class="logo-image ">
+                                        <i class="fa-regular fa-square-plus fs-4 text-primary mt-3"
+                                            data-bs-toggle="modal" data-bs-target="#exampleModal-addmodifiergroup"></i>
+                                    </div>
+                                </div>
+                                <div id="ModifierListPartialViewID">
+
+                                </div>
+                                
+                            </div>
+                        </div>
+
+                        <div
+                            class="right-side-table-div bg-white mt-2 pt-0 com-sm-12 col-md-8 col-lg-9 col-xl-10 col-12 ">
+                            <div class="item-list-main-div  d-lg-flex justify-content-between mt-2">
+                                <!-- item txt -->
+                                <div class="item-div d-flex col-md-3">
+                                    <div class="item-text fs-3 fw-bold text-primary">Modifiers</div>
+                                </div>
+
+                                <!-- search add itemr -->
+                                <div class="search-item-div d-flex  align-items-center justify-content-between mt-2">
+                                    <div class="search-button ">
+                                        @if(Model.Paginationmodifiers.Items.Count != 0 ){
+                                        <input type="hidden" id="modifier-group-id" value="@Model.Paginationmodifiers.Items[0].ModifierGrpId">
+                                        <input type="text" id="searchbtn-mod" placeholder="Search" class="p-1 border ">
+                                        <i class="fa-solid fa-magnifying-glass search-icon-style "></i>
+                                        }
+                                    </div>
+                                    <div class="discard-button">
+                                        <a href="#" class="btn  p-1 ps-2 pe-2 ms-3 border"><i
+                                                class="fa-solid fa-trash-can "></i></a>
+
+                                    </div>
+                                    <div class="additem-button">
+                                        <a  class="btn btn-primary text-light p-2 ms-3 border text" id="AddModifierButton" data-bs-toggle="modal" data-bs-target="#exampleModal-addmodifier">+
+                                            Add
+                                            Modifier</a>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="table-main-div table-responsive mt-3 bg-white mx-auto w-100 ">
+                                <table class="table" id="demo">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col"><input type="checkbox" id="checkboxForSelectAllModifier" onclick="SelectAllModifiers()" class="me-3">
+                                                Name</th>
+                                            <th scope="col">Unit</th>
+                                            <th scope="col">Rate</th>
+                                            <th scope="col">Quantity</th>
+                                            <th scope="col">Action </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="itemListBody-modifier" style="white-space: nowrap;">
+                                        @await Html.PartialAsync("_ModifierListPartial", Model.Paginationmodifiers)
+                                    </tbody>
+                                </table>
+                                 @*  Pagination div *@
+                                <div class="pagination-main-div d-flex justify-content-end gap-2 p-3 pt-0 bg-white ">
+
+                                   @if(Model.Paginationmodifiers.Items.Count != 0){
+                                     <span class="mt-2">Items Per page:</span>
+
+                                    <select id="itemsperpage-mod">
+                                        <option value="5">5</option>
+                                        <option value="10">10</option>
+                                        <option value="15">15</option>
+                                    </select>
+
+                                    <span class=" mt-2 ms-1" id="pagination-text-mod"></span>
+                                    <a id="left-arrow-mod" class="btn border border-dark bg-light ms-2">&lt;</a>
+                                    <a id="right-arrow-mod" class="btn border border-dark bg-light ms-2">&gt;</a>
+                                   }
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+
+
+    </div>
+</div>
+
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            var successMessage = '@TempData["SuccessMessage"]';
+            var errorMessage = '@TempData["ErrorMessage"]';
+            console.log("successMessage", successMessage);
+             toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "timeOut": "2000"
+            };
+            if (successMessage) {
+                toastr.success(successMessage);
+            }
+            if (errorMessage) {
+                toastr.error(errorMessage);
+            }
+        })
+    </script>
+
+<script>
+        $("#choose-file").change(function () {
+            const file = this.files[0];
+            $("#browseFileText").text(file.name);
+        });
+    </script>
+    <script>
+        $("#choose-file-editItem").change(function () {
+            const file = this.files[0];
+            $("#browseFileText-editItem").text(file.name);
+        });
+    </script>
+
+    <script>
+        let catid;
+        // fills details of Edit category
+        function GetdetailsForUpdate(tag) {
+            console.log(tag)
+            document.getElementById("category-id").value = tag.getAttribute("data-id");
+            @* console.log(tag.getAttribute("data-id")); *@
+                document.getElementById("category-name").value = tag.parentElement.parentElement.children[0].children[1].innerHTML;
+            document.getElementById("category-description").value = tag.parentElement.children[0].value;
+            @* console.log(tag.parentElement.parentElement.children[1].value;) *@
+        }
+
+        //details of edit items
+        function getDetailsForEditItem(tag){
+            var itemID =tag.getAttribute("data-id");
+            $.ajax({
+                url:`/Menu/EditItem?itemID=${itemID}`,
+                type:"GET",
+                success: function(data){
+                    console.log(data);
+                    document.getElementById("itemIdForDeleteItem").value =tag.getAttribute("data-id");
+                    document.getElementById("itemName").value = data.itemName;
+                    document.getElementById("itemrate").value=data.rate;
+                    document.getElementById("itemQuantity").value=data.quantity;
+                    document.getElementById("taxPercentage1").value =data.taxValue;
+                    document.getElementById("shortCode1").value=data.shortCode;
+                    document.getElementById("description1").value=data.description;
+                    if(data.isavailable){
+                        document.getElementById("isAvailable1").checked =true;
+                    }else{
+                        document.getElementById("isAvailable1").checked=false;
+                    }
+
+                    if(data.isdefaulttax){
+                        document.getElementById("isDefaultTax1").checked=true;
+                    }else{
+                        document.getElementById("isDefaultTax1").checked=false;
+                    }
+                    var categoryclass=document.getElementsByClassName("categoryClass");
+                    for(i=0;i<categoryclass.length;i++){
+                        categoryclass[i].removeAttribute("selected");
+                    }
+                    document.getElementById(data.categoryId).setAttribute("selected","selected");
+
+                    var itemtypeclass=document.getElementsByClassName("itemtypeclass");
+                    for(i=0;i<itemtypeclass.length;i++){
+                        itemtypeclass[i].removeAttribute("selected");
+                    }
+                    if(data.itemTypeId =="1"){document.getElementById("veg").setAttribute("selected","selected");}
+                    if(data.itemTypeId =="2"){document.getElementById("nonveg").setAttribute("selected","selected");}
+                    if(data.itemTypeId =="3"){document.getElementById("vegan").setAttribute("selected","selected");}
+
+                    
+
+                    var itemUnitClass=document.getElementsByClassName("itemUnitClass");
+                    for(i=0;i<itemUnitClass.length;i++){
+                        itemUnitClass[i].removeAttribute("selected");
+                    }
+                    document.getElementById(data.unit).setAttribute("selected","selected");
+
+
+                    @* document.getElementById("isAvailable1").value=data.isavailable; *@
+                    @* document.getElementById("isDefaultTax1").value=data.isdefaulttax; *@
+                }
+            })
+        }
+
+        function GetdetailsForUpdateModGrp(tag){
+            var modGrpID =tag.getAttribute("data-id");
+            $.ajax({
+                url:`/Menu/EditModGrp?ModGrpID=${modGrpID}`,
+                type:"GET",
+                success: function(data){
+                    console.log(data);
+                    
+                   data.modifiers.forEach(x=>{
+                        modTempID.push(x.modifierId);
+                        modTempName.push(x.modifierName);
+                        editModTempId.push(x.modifierId);
+                        console.log("hii");
+                   });
+                   console.log(data.modifierGroup.modifierGrpId);
+                    document.getElementById("EditModifierGrpIdForEdit").value=data.modifierGroup.modifierGrpId;
+                    console.log(document.getElementById("EditModifierGrpIdForEdit").value);
+                    document.getElementById("EditModGrpNameForEdit").value=data.modifierGroup.modifierGrpName;
+                    document.getElementById("EditModGrpDescriptionForEdit").value=data.modifierGroup.desciption;
+
+                   DisplayNamesOfExistingModForEdit();
+
+                }
+            });
+        }
+
+        
+
+        //add mod grp---to EmptyFieldsAddModGrp the field of add modgrp
+        function EmptyFieldsAddModGrp(){
+            modTempID =[];
+            modTempName=[];
+            
+            document.getElementById("tempIdsHiddenField").value = "";
+            document.getElementById("AddModGrpName").value="";
+            document.getElementById("AddMoGrpDescription").value="";
+            document.getElementById("ExistingModifiers").innerHTML="";
+
+        }
+        //edit mod grp---to EmptyFieldsAddModGrp field of edit modgrp
+        function EmptyFieldsAddModGrpForEdit(){
+            modTempID =[];
+            modTempName=[];
+            editModTempId=[];
+            document.getElementById("tempIdsHiddenFieldForEdit").value = "";
+            document.getElementById("EditModGrpNameForEdit").value="";
+            document.getElementById("EditModGrpDescriptionForEdit").value="";
+            document.getElementById("ExistingModifiersForEdit").innerHTML="";
+
+
+        }
+
+        function GetIdForDelete(tag) {
+            console.log("delete")
+            document.getElementById("category-id-fordelete").value = tag.getAttribute("data-id");
+            console.log(tag.getAttribute("data-id"));
+        }
+        
+        function getIdFroDeleteModGrp(tag) {
+            let modGrpIdInput = document.getElementById("modGrp-id-fordelete");
+            modGrpIdInput.value = tag.getAttribute("data-id");
+        }
+
+        function getIdForDeleteItem(tag){
+            document.getElementById("deleteItemId").value = tag.getAttribute("data-id");
+            console.log( tag.getAttribute("data-id"));
+        }
+
+        function SelectAllItem(){
+            var classess=document.getElementsByClassName("massDeleteClass");
+            var deleteAllItemCkeckbboxId =document.getElementById("checkboxForSelectAllItem");
+            console.log(classess)
+
+            if(deleteAllItemCkeckbboxId.checked){
+                for(i=0; i<classess.length;i++){
+                    classess[i].checked=true;;
+                }
+            }
+            if(!deleteAllItemCkeckbboxId.checked){
+                for(i=0; i<classess.length;i++){
+                    classess[i].checked=false;;
+                }
+            }
+
+        }
+
+        function checkboxTickManage(){  
+            var classess=document.getElementsByClassName("massDeleteClass");
+            var deleteAllItemCkeckbboxId = document.getElementById("checkboxForSelectAllItem");
+            flag=true;
+            for(i=0;i<classess.length;i++){
+                if(!classess[i].checked){
+                    flag=false;
+                }
+            }
+            deleteAllItemCkeckbboxId.checked =flag;
+        }
+
+
+        function SelectAllModifiers(){
+            var classess=document.getElementsByClassName("massDeleteClassModifier");
+            var deleteAllItemCkeckbboxId =document.getElementById("checkboxForSelectAllModifier");
+            console.log(classess)
+
+            if(deleteAllItemCkeckbboxId.checked){
+                for(i=0; i<classess.length;i++){
+                    classess[i].checked=true;;
+                }
+            }
+            if(!deleteAllItemCkeckbboxId.checked){
+                for(i=0; i<classess.length;i++){
+                    classess[i].checked=false;;
+                }
+            }
+
+        }
+         
+        function checkboxTickManageModifier(){  
+            var classess=document.getElementsByClassName("massDeleteClassModifier");
+            var deleteAllItemCkeckbboxId = document.getElementById("checkboxForSelectAllModifier");
+            flag=true;
+            for(i=0;i<classess.length;i++){
+                if(!classess[i].checked){
+                    flag=false;
+                }
+            }
+            deleteAllItemCkeckbboxId.checked =flag;
+        }
+
+        function SelectAllModifiersExist(){
+            var classess=document.getElementsByClassName("massDeleteClassModifierExist");
+            var deleteAllItemCkeckbboxId =document.getElementById("checkboxForSelectAllModifierExist");
+            console.log(classess)
+
+            if(deleteAllItemCkeckbboxId.checked){
+                for(i=0; i<classess.length;i++){
+                    classess[i].checked=true;;
+                    ModifiersSelected(classess[i]);
+                  
+                }
+            }
+            if(!deleteAllItemCkeckbboxId.checked){
+                for(i=0; i<classess.length;i++){
+                    classess[i].checked=false;;
+                    ModifiersSelected(classess[i]);
+                }
+            }
+        }
+        
+        function checkboxTickManageModifierExist(){  
+            var classess=document.getElementsByClassName("massDeleteClassModifierExist");
+            var deleteAllItemCkeckbboxId = document.getElementById("checkboxForSelectAllModifierExist");
+            flag=true;
+            for(i=0;i<classess.length;i++){
+                if(!classess[i].checked){
+                    flag=false;
+                }
+            }
+            deleteAllItemCkeckbboxId.checked =flag;
+        }
+        
+        //load all modifiers for add existing modifier width pagination
+        function LoadAllModifiers(search="",page=1,pageSize=5){
+                $.ajax({
+                    
+                    url: "/Menu/MenuModifierAllPagination",
+                    type: "GET",
+                    data: { search, pageNumber: page, pageSize },
+                    success: function (data) {
+                        //console.log(data);
+                        document.getElementById("checkboxForSelectAllModifierExist").checked=false;
+                        document.getElementById("AllModifiersListBody").innerHTML=data;
+                        //document.getElementById("exampleModal-addmodifiergroup").style.opacity=0; 
+                        currentPageModExist = page;
+                        pageSizeModExist = parseInt(pageSizeModExist);
+                        var totalRecordsModExist = parseInt($("#totalCount-modExist").val()) || 0;
+                        var startItemModExist = totalRecordsModExist === 0 ? 0 : (currentPageModExist - 1) * pageSizeModExist + 1;
+                        var endItemModExist = Math.min(currentPageModExist * pageSizeModExist, totalRecordsModExist);
+
+                        $("#pagination-text-modExist").text("Showing " + startItemModExist + " - " + endItemModExist + " of " + totalRecordsModExist);
+                        $("#left-arrow-modExist").prop("disabled", currentPageModExist === 1);
+                        $("#right-arrow-modExist").prop("disabled", currentPageModExist * pageSizeModExist >= totalRecordsModExist);
+                        $("#checkboxForSelectAllModifierExist").prop("checked", false);
+                        @* console.log("loop") *@
+                        modTempID.forEach(id=>{
+                           var iddata= document.getElementById(`modifier-${id}`);
+                           if(iddata!=null){
+                            iddata.checked=true;
+                           }
+                        })
+                    }
+                });
+            }
+
+        //load all modifiers for edit existing modifier width pagination
+            function LoadAllModifiersForEdit(search="",page=1,pageSize=5){
+                $.ajax({
+                    
+                    url: "/Menu/MenuModifierAllPagination",
+                    type: "GET",
+                    data: { search, pageNumber: page, pageSize },
+                    success: function (data) {
+                        //console.log(data);
+                        document.getElementById("checkboxForSelectAllModifierExist").checked=false;
+                        document.getElementById("AllModifiersListBodyEdit").innerHTML=data;
+                        //document.getElementById("exampleModal-addmodifiergroup").style.opacity=0; 
+                        currentPageModExistForEdit = page;
+                        pageSizeModExistForEdit = parseInt(pageSizeModExist);
+                        var totalRecordsModExistForEdit = parseInt($("#totalCount-modExist").val()) || 0;
+                        var startItemModExistForEdit = totalRecordsModExistForEdit === 0 ? 0 : (currentPageModExistForEdit - 1) * pageSizeModExistForEdit + 1;
+                        var endItemModExistForEdit = Math.min(currentPageModExistForEdit * pageSizeModExistForEdit, totalRecordsModExistForEdit);
+
+                        $("#pagination-text-modExistForEdit").text("Showing " + startItemModExistForEdit + " - " + endItemModExistForEdit + " of " + totalRecordsModExistForEdit);
+                        $("#left-arrow-modExistForEdit").prop("disabled", currentPageModExistForEdit === 1);
+                        $("#right-arrow-modExistForEdit").prop("disabled", currentPageModExistForEdit * pageSizeModExistForEdit >= totalRecordsModExistForEdit);
+                        $("#checkboxForSelectAllModifierExist").prop("checked", false);
+                        @* console.log("loop") *@
+                        modTempID.forEach(id=>{
+                           var iddata= document.getElementById(`modifier-${id}`);
+                           if(iddata!=null){
+                            iddata.checked=true;
+                           }
+                        })
+                    }
+                });
+            }
+        
+        @* function saveModifiersToModifierGroup(){
+            console.log(modTempID);
+            $.ajax({
+                url:"Menu/AddModifierGroup",
+                type:"post",
+                data:{modTempID},
+                success:function(data){
+                    console.log("modifiergrp added");
+                }
+            })
+        } *@
+    </script>
+
+    <script>
+            let modifierGrpID =$("#modifier-group-id").val();
+            let currentPageMod=1;
+             let currentPageModExist=1;
+            let pageSizeMod=$("#itemsperpage-mod").val();
+            let pageSizeModExist=$("#itemsperpage-modExist").val();
+
+            let searchTextMod="";
+            let searchTextModExist="";
+            let modTempID=[];
+            let modTempName=[];
+            let editModTempId=[];
+
+            let currentPageModExistForEdit =1;
+            let pageSizeModExistForEdit =$("#itemsperpage-modExistForEdit").val();
+            let searchTextModExistForEdit = "";
+
+
+            //load modifiers btn modID ajax
+            function loadTablemodifier(modifierGrpID, search = "", page = 1, pageSize = 5) {
+                $.ajax({
+                    
+                    url: "/Menu/MenuModifierPagination",
+                    type: "GET",
+                    data: { modifierGrpID, search, pageNumber: page, pageSize },
+                    success: function (data) {
+                        console.log("inAhjax # 111111",modifierGrpID);
+                        $("#itemListBody-modifier").html(data);
+                        currentPageMod = page;
+                        pageSizeMod = parseInt(pageSize);
+                        var totalRecordsMod = parseInt($("#totalCount-mod").val()) || 0;
+                        var startItemMod = totalRecordsMod === 0 ? 0 : (currentPageMod - 1) * pageSizeMod + 1;
+                        var endItemMod = Math.min(currentPageMod * pageSizeMod, totalRecordsMod);
+
+                        $("#pagination-text-mod").text("Showing " + startItemMod + " - " + endItemMod + " of " + totalRecordsMod);
+                        $("#left-arrow-mod").prop("disabled", currentPageMod === 1);
+                        $("#right-arrow-mod").prop("disabled", currentPageMod * pageSizeMod >= totalRecordsMod);
+                        $("#checkboxForSelectAllModifier").prop("checked", false);
+                    }
+                });
+            }
+            //load all modifier partialview ajax
+            
+            //load modifier group ajax
+            function loadModifierGroup(){
+                $.ajax({
+                    url:"/Menu/GetAllModifierGroups",
+                    type:"Get",
+                    success:function(data){
+                        document.getElementById("ModifierListPartialViewID").innerHTML=data;
+                        console.log("fetched all modifiergrp")
+                    }
+                })
+            }
+
+            //Add-----method to show selected existing modifier in add modgrp
+            function DisplayNamesOfExistingMod(){
+                console.log(modTempName);
+                var modDiv=document.getElementById("ExistingModifiers");
+                console.log(modDiv);
+                console.log("heloooooooooo")
+                modDiv.innerHTML = "";
+                for(i=0;i<modTempID.length;i++){
+                    modDiv.innerHTML += `<div class="p-1 border border-1 rounded-pill ms-3 mb-2 me-2 d-inline justify-content-between align-items-center" style="max-width:fit-content;">
+                    ${modTempName[i]} <i class="fa-solid fa-xmark" style="margin-left: 0px;" onclick="RemoveFromList(\`${modTempID[i]}\`,\`${modTempName[i]}\`)" ></i></div> `
+                }
+            }
+            //Edit #-----method to show selected existing modifier in edit modgrp
+            function DisplayNamesOfExistingModForEdit(){
+                console.log(modTempName);
+                var modDiv=document.getElementById("ExistingModifiersForEdit");
+                console.log(modDiv);
+                console.log("heloooooooooo")
+                modDiv.innerHTML = "";
+                for(i=0;i<modTempID.length;i++){
+                    modDiv.innerHTML += `<div class="p-1 border border-1 rounded-pill ms-3 mb-2 me-2 d-inline justify-content-between align-items-center" style="max-width:fit-content;">
+                    ${modTempName[i]} <i class="fa-solid fa-xmark" style="margin-left: 0px;" onclick="RemoveFromListForEdit(\`${modTempID[i]}\`,\`${modTempName[i]}\`)" ></i></div> `
+                }
+            }
+            
+            //method when checkbox of existing mod ticked
+            function ModifiersSelected(tag){
+                id =tag.getAttribute("data-checkid");
+                name=tag.parentElement.children[1].innerHTML;
+                console.log(id);
+                console.log(name);
+                if(tag.checked){
+                    if(modTempName.indexOf(name)==-1){
+                        modTempID.push(id);
+                        modTempName.push(name); 
+                    }
+                }
+                else{
+                    modTempID.splice(modTempID.indexOf(id),1);
+                    modTempName.splice(modTempName.indexOf(name),1);  
+                }
+            }
+
+            @* function isModCheckedOrNot(modId){
+                
+                let existdata =modTempID.indexOf(modId);
+                console.log(existdata);
+                if(existdata==-1){document.getElementById(`modifier-${modId}`).checked = false}
+                else{document.getElementById(`modifier-${modId}`).checked = true;}
+            } *@
+
+            function RemoveFromList(id,name){
+                console.log("remove")
+                console.log(id)
+                console.log(name);
+                 modTempID.splice(modTempID.indexOf(id),1);
+                modTempName.splice(modTempName.indexOf(name),1);
+                DisplayNamesOfExistingMod();
+            }
+            function RemoveFromListForEdit(id,name){
+                console.log("remove")
+                console.log(id)
+                console.log(name);
+                modTempID.splice(editModTempId.indexOf(id),1);
+                modTempName.splice(modTempName.indexOf(name),1);
+                DisplayNamesOfExistingModForEdit();
+            }
+
+        $(document).ready(function () {
+            let currentPage = 1;
+            let pageSize = $("#itemsperpage").val();
+            let searchText = "";  
+            let catID = $("#category-id-items").val();
+            console.log("c: mod", modifierGrpID);
+
+            function loadTable(catID, search = "", page = 1, pageSize = 5) {
+                $.ajax({
+                    url: "/Menu/MenuItemPagination",
+                    type: "GET",
+                    data: { catID, search, pageNumber: page, pageSize },
+                    success: function (data) {
+                        $("#itemListBody").html(data);
+                        currentPage = page;
+                        pageSize = parseInt(pageSize);
+                        var totalRecords = parseInt($("#totalCount").val()) || 0;
+                        var startItem = totalRecords === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+                        var endItem = Math.min(currentPage * pageSize, totalRecords);
+
+                        $("#pagination-text").text("Showing " + startItem + " - " + endItem + " of " + totalRecords);
+                        $("#left-arrow").prop("disabled", currentPage === 1);
+                        $("#right-arrow").prop("disabled", currentPage * pageSize >= totalRecords);
+                        $("#checkboxForSelectAllItem").prop("checked", false);
+                        
+                    }
+                });
+            }
+
+            
+
+            loadTable(catID, searchText, currentPage, pageSize);
+            loadTablemodifier(modifierGrpID,searchTextMod,currentPageMod,pageSizeMod);
+           // LoadAllModifiers(searchTextModExist,currentPageModExist,pageSizeModExist);
+            loadModifierGroup();
+
+
+            // Search on keyup
+            $("#searchbtn").on("keyup", function () {
+                searchText = $(this).val().trim();
+                console.log(searchText);
+                currentPage =1;
+                loadTable(catID, searchText, currentPage, pageSize);
+                SelectAllItem(); 
+            });
+            $("#searchbtn-mod").on("keyup", function () {
+                searchTextMod = $(this).val().trim();
+                console.log(searchTextMod);
+                currentPageMod =1;
+                loadTablemodifier(modifierGrpID, searchTextMod, currentPageMod, pageSizeMod);
+                @* loadModifierGroup(); *@
+                SelectAllModifiers(); 
+            });
+
+            $("#searchbtn-existingMod").on("keyup", function () {
+                searchTextModExist = $(this).val().trim();
+                console.log(searchTextModExist);
+                currentPageModExist =1;
+                LoadAllModifiers(searchTextModExist,currentPageModExist,pageSizeModExist);
+                @* loadModifierGroup(); *@
+                @* SelectAllModifiersExist();  *@
+            });
+            $("#searchbtn-existingModForEdit").on("keyup", function () {
+                searchTextModExistForEdit = $(this).val().trim();
+                console.log(searchTextModExistForEdit);
+                currentPageModExistForEdit =1;
+                LoadAllModifiersForEdit(searchTextModExistForEdit,currentPageModExistForEdit,pageSizeModExistForEdit);
+                @* loadModifierGroup(); *@
+                @* SelectAllModifiersExist();  *@
+            });
+
+
+            $(".categories-div").on("click",function(){
+                $(".categories-div").removeClass("active-category");
+                $(this).addClass("active-category");
+                catID = $(this).data("id");
+                currentPage=1;
+                loadTable(catID, searchText, currentPage, pageSize);
+            })
+
+            $(document).on("click",".modifiers-div-main", function () {
+                $(".modifiers-div-main").removeClass("active-category");
+                $(this).addClass("active-category");
+                modifierGrpID = $(this).data("id");
+                console.log("modid ", modifierGrpID)
+                loadTablemodifier(modifierGrpID, searchTextMod, currentPageMod, pageSizeMod);
+                @* loadModifierGroup(); *@
+    })
+            
+            // Pagination buttons
+            $("#right-arrow").on("click", function () {
+                let rightarrow = !$(this).prop("disabled");
+                console.log(rightarrow);
+                if (rightarrow) {
+                    currentPage++;
+                    loadTable(catID, searchText, currentPage, pageSize);
+                    SelectAllItem(); 
+                }
+            });
+            $("#right-arrow-mod").on("click", function () {
+                let rightarrowMod = !$(this).prop("disabled");
+                console.log(rightarrowMod);
+                if (rightarrowMod) {
+                    currentPageMod++;
+                    loadTablemodifier(modifierGrpID, searchTextMod, currentPageMod, pageSizeMod);
+                    @* loadModifierGroup(); *@
+                    SelectAllModifiers(); 
+                }
+            });
+
+            $("#right-arrow-modExist").on("click", function () {
+                let rightarrowModExist = !$(this).prop("disabled");
+                console.log(rightarrowModExist);
+                if (rightarrowModExist) {
+                    currentPageModExist++;
+                    LoadAllModifiers(searchTextModExist,currentPageModExist,pageSizeModExist);
+                    //SelectAllModifiersExist(); 
+                }
+            });
+            $("#right-arrow-modExistForEdit").on("click", function () {
+                let rightarrowModExist = !$(this).prop("disabled");
+                console.log(rightarrowModExist);
+                if (rightarrowModExist) {
+                    currentPageModExistForEdit++;
+                    LoadAllModifiersForEdit(searchTextModExistForEdit,currentPageModExistForEdit,pageSizeModExistForEdit);
+                    //SelectAllModifiersExist(); 
+                }
+            });
+
+            $("#left-arrow").on("click", function () {
+                let leftarrow = !$(this).prop("disabled");
+                console.log(leftarrow);
+                if (leftarrow) {
+                    currentPage--;
+                    loadTable(catID, searchText, currentPage, pageSize);
+                    SelectAllItem(); 
+                }
+            });
+            $("#left-arrow-mod").on("click", function () {
+                let leftarrowMod = !$(this).prop("disabled");
+                console.log(leftarrowMod);
+                if (leftarrowMod) {
+                    currentPageMod--;
+                    loadTablemodifier(modifierGrpID, searchTextMod, currentPageMod, pageSizeMod);
+                    @* loadModifierGroup(); *@
+                    SelectAllModifiers(); 
+                }
+            });
+
+             $("#left-arrow-modExist").on("click", function () {
+                let leftarrowModExist = !$(this).prop("disabled");
+                console.log(leftarrowModExist);
+                if (leftarrowModExist) {
+                    currentPageModExist--;
+                    LoadAllModifiers(searchTextModExist,currentPageModExist,pageSizeModExist);
+                    //SelectAllModifiersExist(); 
+                }
+            });
+            $("#left-arrow-modExistForEdit").on("click", function () {
+                let leftarrowModExistForEdit = !$(this).prop("disabled");
+                console.log(leftarrowModExistForEdit);
+                if (leftarrowModExistForEdit) {
+                    currentPageModExistForEdit--;
+                    LoadAllModifiersForEdit(searchTextModExistForEdit,currentPageModExistForEdit,pageSizeModExistForEdit);
+                    //SelectAllModifiersExist(); 
+                }
+            });
+
+            // Items per page dropdown
+            $("#itemsperpage").on("change", function () {
+                pageSize = $(this).val();
+                currentPage=1;
+                console.log(pageSize);
+                loadTable(catID, searchText, currentPage, pageSize);
+                SelectAllItem(); 
+            });
+            $("#itemsperpage-mod").on("change", function () {
+                pageSizeMod = $(this).val();
+                currentPageMod=1;
+                console.log(pageSizeMod);
+                loadTablemodifier(modifierGrpID, searchTextMod, currentPageMod, pageSizeMod);
+                @* loadModifierGroup(); *@
+                SelectAllModifiers(); 
+            });
+            $("#itemsperpage-modExist").on("change", function () {
+                pageSizeModExist = $(this).val();
+                currentPageModExist=1;
+                console.log(pageSizeModExist);
+                LoadAllModifiers(searchTextModExist,currentPageModExist,pageSizeModExist);
+                //SelectAllModifiersExist(); 
+            });
+            $("#itemsperpage-modExistForEdit").on("change", function () {
+                pageSizeModExistForEdit = $(this).val();
+                currentPageModExistForEdit=1;
+                console.log(pageSizeModExistForEdit);
+                LoadAllModifiersForEdit(searchTextModExistForEdit,currentPageModExistForEdit,pageSizeModExistForEdit);
+                //SelectAllModifiersExist(); 
+            });
+
+
+
+
+            //delete all items
+            $("#deleteAllItemsModalYesButton").on("click",function(){
+                 var classess=document.getElementsByClassName("massDeleteClass");
+                 @* console.log("delete all") *@
+                 for(i=0; i<classess.length;i++){
+                    if(classess[i].checked){
+
+                        let itemID = classess[i].getAttribute("data-checkid");
+                        console.log(itemID)
+                        $.ajax({
+                             url: `/Menu/DeleteItem?itemID=${itemID}`,
+                            type: "GET",
+                            success: function (data) {
+                                
+                                loadTable(catID, searchText, currentPage, pageSize);
+                            }
+                        })
+                    }
+                }
+            })  
+
+    
+            //add modifier get ajax
+            $("#exampleModal-addmodifier").on('show.bs.modal',function(event){
+                console.log("hiii")
+                $.ajax({
+                    url:"/Menu/AddModifierModal",
+                    type:"GET",
+                    data: {},
+                    success: function (data) {
+                        console.log("dfkhsvc");
+                        $("#AddModifierModal-mainDiv").html(data);
+                        loadModifierGroup();
+                    }
+                    })
+             }) 
+
+            //add modifier modal post ajax
+            $(document).on("submit","#addModifierModalId",function(e){
+                console.log("heloooooooooooo")
+                e.preventDefault();
+                
+                let form=$("#addModifierModalId");
+                if(form.valid()){
+                    let formData=new FormData(this);
+                    console.log(formData);
+                    $.ajax({
+                        url:"AddModifier",
+                        type:"POST",
+                        contentType: false,
+                        processData: false,
+                        data: formData,
+                        success: function (res) {
+                            @* $(".btn-close").click(); *@
+                            console.log(res);
+                            loadTablemodifier(modifierGrpID, searchTextMod, currentPageMod, pageSizeMod);
+                            loadModifierGroup();
+                            SelectAllModifiers();
+                        }
+                    })
+                }
+            })
+
+
+            //add modifier group post 
+            $(document).on("submit","#addModifierGroupModalFormId", function (e) {
+                e.preventDefault();
+                document.getElementById("tempIdsHiddenField").value =modTempID;
+                let form = $("#addModifierGroupModalFormId");
+                if (form.valid()) {
+                    let formData2 = new FormData(this);
+                    console.log(formData2);
+                    $.ajax({
+                        url: `/Menu/AddModifierGroup`,
+                        type: "POST",
+                        contentType: false,
+                        processData: false,
+                        data: formData2,
+                        success: function (res) {
+                            console.log(res);
+                            $(".btn-close").click();
+                            loadTablemodifier(modifierGrpID, searchTextMod, currentPageMod, pageSizeMod);
+                            loadModifierGroup();
+                            SelectAllModifiers();
+                            modTempID=[];
+                            modTempName=[];
+                        }
+                    })
+                }
+            })  
+
+
+            //Eidt modifier group post method
+            $(document).on("submit","#EditModifierGroupModalFormId",function(e){
+                e.preventDefault();
+                console.log(document.getElementById("EditModifierGrpIdForEdit").value);
+                let form = $("#EditModifierGroupModalFormId");
+                if (form.valid()) {
+                    let formData2 = new FormData(this);
+                    console.log(formData2);
+                    $.ajax({
+                        url: `/Menu/EditModifierGroup`,
+                        type: "POST",
+                        contentType: false,
+                        processData: false,
+                        data: formData2,
+                        success: function (res) {
+                            console.log(res);
+                            console.log("edit data saved");
+                            for( i=0;i<editModTempId;i++){
+                                if (modTempID.indexOf(editModTempId[i])==-1) {
+                                    //deleteModifierFromModGrpAfterEdit(modGrpID,editModTempId[i]);
+                                    console.log("delete existing modifier")
+                                    $.ajax({
+                                        url:`/Menu/deleteModifierFromModGrpAfterEdit?modGrpID=${res}&modifierID=${editModTempId[i]}`,
+                                        type:"Post",
+                                        success:function(res){
+                                            console.log("deleted external modifierGroup form modGrpID addModifierToModGrpAfterEdit edit");
+                                        }
+                                    })
+                                }
+                            }
+                            for( i=0;i<modTempID;i++){
+                                if(editModTempId.indexOf(modTempID[i])==-1){
+                                    //addModifierToModGrpAfterEdit(modGrpID,modTempID[i]);
+                                    console.log("add existing mod");
+                                    $.ajax({
+                                        url:`/Menu/addModifierToModGrpAfterEdit?modGrpID=${res}&modifierID=${modTempID[i]}`,
+                                        type:"post",
+                                        success:function(res){
+                                            console.log("added external modifierGroup form modGrpID addModifierToModGrpAfterEdit ");
+                                        }
+                                    })
+                                }
+                            }
+                            $(".btn-close").click();
+                            loadTablemodifier(modifierGrpID, searchTextMod, currentPageMod, pageSizeMod);
+                            loadModifierGroup();
+                            SelectAllModifiers();
+                            modTempID=[];
+                            editModTempId=[];
+                            modTempName=[];
+                        }
+                    })
+                }
+            })
+
+            //delete modifier group
+            $(document).on("submit", "#deleteModifierGroupFormId", function (e) {
+                e.preventDefault();
+
+                let modGrpid = document.getElementById("modGrp-id-fordelete").value;
+                console.log("modgrp:", modGrpid); // Debugging
+
+                $.ajax({
+                    url: `/Menu/DeleteModGrp`,
+                    type: "POST",
+                    data: { modGrpid: modGrpid }, // Send as a standard form field
+                    success: function (res) {
+                        console.log("Response from server:", res);
+                        $(".btn-close").click();
+                        loadTablemodifier(modifierGrpID, searchTextMod, currentPageMod, pageSizeMod);
+                        loadModifierGroup();
+                    }
+                });
+            });
+
+            @* $("#AddExistingModifierTextdiv").on("click",function(e){
+              
+                
+                LoadAllModifiers();
+                console.log(document.getElementById("exampleModal-addExistingmodifier"));
+                
+            }) *@
+          
+            
+            
+
+        });
+    </script>
+
+ @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+}
